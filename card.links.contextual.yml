@@ -1,0 +1,11 @@
+entity.card.block.edit_form:
+  route_name: entity.block_content.edit_form
+  group: card
+  title: Content
+  weight: 5
+
+entity.card.delete_form:
+  route_name: entity.card.delete_form
+  group: card
+  title: Delete
+  weight: 10

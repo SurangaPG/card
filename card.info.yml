@@ -1,0 +1,6 @@
+name: Card
+type: module
+description: Makes structural changes to how the html is rendered to grant more power to editors.
+core: 8.x
+package: Custom
+dependencies:

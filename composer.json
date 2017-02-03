@@ -1,0 +1,11 @@
+{
+  "name": "drupal/card",
+  "type": "drupal-module",
+  "description": "Provides a way of creating more fluid layout based via enhanced html render building.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://ausybenelux.atlassian.net/wiki/display/devteam/Cards",
+  "minimum-stability": "dev",
+  "support": {},
+  "require": { }
+}

@@ -1,0 +1,6 @@
+services:
+  card.page_display_variant_subscriber.block:
+    class: Drupal\card\EventSubscriber\CardEventSubscriber
+    arguments: ['@request_stack', '@current_user']
+    tags:
+      - { name: event_subscriber }

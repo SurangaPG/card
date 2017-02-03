@@ -1,0 +1,21 @@
+# Card routing definition
+card.settings_tab:
+  route_name: card.settings
+  title: 'Settings'
+  base_route: card.settings
+
+entity.card.canonical:
+  route_name: entity.card.canonical
+  base_route: entity.card.canonical
+  title: 'View'
+
+entity.card.edit_form:
+  route_name: entity.card.edit_form
+  base_route: entity.card.canonical
+  title: Edit
+
+entity.card.delete_form:
+  route_name:  entity.card.delete_form
+  base_route:  entity.card.canonical
+  title: Delete
+  weight: 10

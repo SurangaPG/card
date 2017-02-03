@@ -1,0 +1,19 @@
+add card entities:
+  title: 'Create new Card entities'
+
+administer card entities:
+  title: 'Administer Card entities'
+  description: 'Allow to access the administration form to configure Card entities.'
+  restrict access: true
+
+delete card entities:
+  title: 'Delete Card entities'
+
+edit card entities:
+  title: 'Edit Card entities'
+
+view published card entities:
+  title: 'View published Card entities'
+
+view unpublished card entities:
+  title: 'View unpublished Card entities'

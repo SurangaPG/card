@@ -1,0 +1,13 @@
+# Card menu items definition
+entity.card.collection:
+  title: 'Card list'
+  route_name: entity.card.collection
+  description: 'List Card entities'
+  parent: system.admin_structure
+  weight: 100
+
+card.admin.structure.settings:
+  title: Card settings
+  description: 'Configure Card entities'
+  route_name: card.settings
+  parent: system.admin_structure
