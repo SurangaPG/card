@@ -142,8 +142,12 @@ class CardPageVariant extends BlockPageVariant {
 
       /*
        * Merge the data from the loaders into the block regions.
+       * Taking into account that certain arrays might have been empty. 
        */
-      $build[$region] = array_merge($build[$region], $loaders);
+      $build[$region] = isset($build[$region]) ?
+        array_merge($build[$region], $loaders) :
+        $loaders
+      ;
       $build[$region]['#sorted'] = FALSE;
 
     }

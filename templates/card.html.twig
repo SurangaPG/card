@@ -1,1 +1,23 @@
-<h1>LALALA</h1>
+{#
+/**
+ * @file card.html.twig
+ * Default theme implementation to present Card data.
+ *
+ * This template is used when viewing Card pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_card()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>
+  {{ title_suffix }}
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

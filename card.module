@@ -1,2 +1,25 @@
 <?php
 
+/**
+ * Implements hook_theme()
+ */
+function card_theme() {
+  $theme = [];
+
+  $theme['card'] = array(
+    'render element' => 'elements',
+    'file' => 'card.preprocess.php',
+    'template' => 'card',
+  );
+
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function card_theme_suggestions_card(array $variables) {
+  $suggestions = [];
+  $suggestions[] = 'card__' . $variables['elements']['#view_mode'];
+  return $suggestions;
+}
