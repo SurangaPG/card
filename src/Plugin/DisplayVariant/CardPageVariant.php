@@ -4,7 +4,7 @@ namespace Drupal\card\Plugin\DisplayVariant;
 
 use Drupal\block\BlockRepositoryInterface;
 use Drupal\block\Plugin\DisplayVariant\BlockPageVariant;
-use Drupal\Card\Event\CardRegionBuildEvent;
+use Drupal\card\Event\CardRegionBuildEvent;
 use Drupal\Core\Entity\EntityViewBuilderInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -122,7 +122,7 @@ class CardPageVariant extends BlockPageVariant {
     $build = parent::build();
 
     /*
-     * We'll make a a special attempt to join in more flexible content with the
+     * We'll dispatch an event to join in more flexible content with the
      * more config oriented blocks in the region.
      * Basically we'll just allow any module to decide how it adds which content
      * to the flexible card system based on the route that is currently being
@@ -131,8 +131,51 @@ class CardPageVariant extends BlockPageVariant {
     foreach($this->themeManager->getActiveTheme()->getRegions() as $region) {
       $event = new CardRegionBuildEvent($region, $this->routeMatch);
       $this->eventDispatcher->dispatch(self::CARD_BUILD_REGION_EVENT, $event);
+
+      /*
+       * Inject the newly added data into the region. This will allow the card
+       * to be rendered into the same array as the block.
+       *
+       * @TODO Should there be a way to prevent the same card loaded from different sources collapsing on each other
+       */
+      $loaders = $this->generateCardLoaders($event->getCards());
+
+      /*
+       * Merge the data from the loaders into the block regions.
+       */
+      $build[$region] = array_merge($build[$region], $loaders);
+      $build[$region]['#sorted'] = FALSE;
+
     }
     return $build;
+  }
+
+  /**
+   * Generate lazy loaders based on the data passed from the event dispatcher.
+   *
+   * @param array $cardData
+   *    An array of card data to display the cards from. Either an array of data
+   *    with extra keys or a simple id.
+   * @return array
+   *    Array of card lazy loaders keyed by machine name.
+   */
+  protected function generateCardLoaders($cardData) {
+    $loaders = [];
+
+    foreach($cardData as $card) {
+      $loaders['card_' . $card['id']] = [
+        '#lazy_builder' => [
+          "Drupal\\card\\Handler\\CardViewBuilder::lazyBuilder",
+          [
+            $card['id'],
+            isset($card['view_mode']) ? $card['view_mode'] : null,
+            isset($card['language']) ? $card['language'] : null,
+          ]
+        ]
+      ];
+    }
+
+    return $loaders;
   }
 
   /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\Card\Event;
+namespace Drupal\card\Event;
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class CardRegionBuildEvent extends Event {
+class CardRegionBuildEvent extends Event implements CardRegionBuildEventInterface{
 
   /**
    * @var string $region the region that is being generated
@@ -66,11 +66,12 @@ class CardRegionBuildEvent extends Event {
   }
 
   /**
-   * Adds a card based on it's id
-   * @param $cardId
+   * Adds a card based on some basic data
+   * @param array $cardInfo
+   *  contains the keys id, view_mode, language.
    */
-  public function addCard($cardId) {
-    $this->cards[$cardId] = $cardId;
+  public function addCard($cardInfo) {
+    $this->cards[] = $cardInfo;
   }
 
 }
