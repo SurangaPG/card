@@ -1,6 +1,13 @@
 services:
-  card.page_display_variant_subscriber.block:
-    class: Drupal\card\EventSubscriber\CardEventSubscriber
+  card.event_subscriber.page_display_variant_selection:
+    class: Drupal\card\EventSubscriber\CardPageDisplayVariantSelectionEventSubscriber
     arguments: ['@request_stack', '@current_user']
     tags:
       - { name: event_subscriber }
+  card.event_subcriber.card_build_region:
+    class: Drupal\card\EventSubscriber\CardRegionBuildEventSubscriber
+    tags:
+      - { name: event_subscriber }
+  card.repository:
+    class: Drupal\card\CardRepository
+    arguments: ['@entity_type.manager', '@theme.manager', '@event_dispatcher']

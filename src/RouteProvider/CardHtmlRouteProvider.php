@@ -29,6 +29,10 @@ class CardHtmlRouteProvider extends AdminHtmlRouteProvider {
       $collection->add("entity.{$entity_type_id}.add_form", $add_form_route);
     }
 
+    if ($attach_form_route = $this->getAttachFormRoute($entity_type)) {
+      $collection->add("entity.{$entity_type_id}.attach_form", $attach_form_route);
+    }
+
     if ($settings_form_route = $this->getSettingsFormRoute($entity_type)) {
       $collection->add("$entity_type_id.settings", $settings_form_route);
     }
@@ -98,6 +102,40 @@ class CardHtmlRouteProvider extends AdminHtmlRouteProvider {
       return $route;
     }
   }
+
+  /**
+   * Gets the attach-form route.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Symfony\Component\Routing\Route|null
+   *   The generated route, if available.
+   */
+  protected function getAttachFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('attach-form')) {
+      $entity_type_id = $entity_type->id();
+      $parameters = [
+        $entity_type_id => ['type' => 'entity:' . $entity_type_id]
+      ];
+
+      $route = new Route($entity_type->getLinkTemplate('attach-form'));
+      // Use the add form handler, if available, otherwise default.
+      $route
+        ->setDefaults([
+          '_entity_form' => "{$entity_type_id}.attach",
+          '_title' => "Attach {$entity_type->getLabel()}",
+        ])
+        ->setRequirement('_entity_create_access', $entity_type_id);
+
+      $route
+        ->setOption('parameters', $parameters)
+        ->setOption('_admin_route', TRUE);
+
+      return $route;
+    }
+  }
+
 
   /**
    * Gets the settings form route.

@@ -4,7 +4,7 @@ namespace Drupal\card\Plugin\DisplayVariant;
 
 use Drupal\block\BlockRepositoryInterface;
 use Drupal\block\Plugin\DisplayVariant\BlockPageVariant;
-use Drupal\card\Event\CardRegionBuildEvent;
+use Drupal\card\CardRepositoryInterface;
 use Drupal\Core\Entity\EntityViewBuilderInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -21,12 +21,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * )
  */
 class CardPageVariant extends BlockPageVariant {
-
-  /**
-   * Card build event for a region. This allows the loading of cards into the
-   * system via a standardized event.
-   */
-  const CARD_BUILD_REGION_EVENT = 'card.build_region';
 
   /**
    * The theme manager.
@@ -55,6 +49,11 @@ class CardPageVariant extends BlockPageVariant {
   protected $routeMatch;
 
   /**
+   * @var \Drupal\card\CardRepositoryInterface $cardRepository
+   */
+  protected $cardRepository;
+
+  /**
    * Constructs a new PlaceBlockPageVariant.
    *
    * @param array $configuration
@@ -77,6 +76,8 @@ class CardPageVariant extends BlockPageVariant {
    *   The symfony event dispatcher
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The route match for the current route
+   * @param \Drupal\card\CardRepositoryInterface $card_repository
+   *   The route match for the current route
    */
   public function __construct(
     array $configuration,
@@ -87,14 +88,23 @@ class CardPageVariant extends BlockPageVariant {
     ThemeManagerInterface $theme_manager,
     RedirectDestinationInterface $redirect_destination,
     EventDispatcherInterface $event_dispatcher,
-    RouteMatchInterface $route_match
+    RouteMatchInterface $route_match,
+    CardRepositoryInterface $card_repository
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $block_repository, $block_view_builder, $block_list_cache_tags);
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $block_repository,
+      $block_view_builder,
+      $block_list_cache_tags
+    );
 
     $this->themeManager = $theme_manager;
     $this->redirectDestination = $redirect_destination;
     $this->eventDispatcher = $event_dispatcher;
     $this->routeMatch = $route_match;
+    $this->cardRepository = $card_repository;
   }
 
   /**
@@ -111,7 +121,8 @@ class CardPageVariant extends BlockPageVariant {
       $container->get('theme.manager'),
       $container->get('redirect.destination'),
       $container->get('event_dispatcher'),
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('card.repository')
     );
   }
 
@@ -121,65 +132,24 @@ class CardPageVariant extends BlockPageVariant {
   public function build() {
     $build = parent::build();
 
-    /*
-     * We'll dispatch an event to join in more flexible content with the
-     * more config oriented blocks in the region.
-     * Basically we'll just allow any module to decide how it adds which content
-     * to the flexible card system based on the route that is currently being
-     * loaded
-     */
-    foreach($this->themeManager->getActiveTheme()->getRegions() as $region) {
-      $event = new CardRegionBuildEvent($region, $this->routeMatch);
-      $this->eventDispatcher->dispatch(self::CARD_BUILD_REGION_EVENT, $event);
+    $cardsPerRegion = $this->cardRepository->getCardsFromRouteMatch($this->routeMatch);
 
-      /*
-       * Inject the newly added data into the region. This will allow the card
-       * to be rendered into the same array as the block.
-       *
-       * @TODO Should there be a way to prevent the same card loaded from different sources collapsing on each other
-       */
-      $loaders = $this->generateCardLoaders($event->getCards());
+    foreach($cardsPerRegion as $region => $cards) {
 
       /*
        * Merge the data from the loaders into the block regions.
-       * Taking into account that certain arrays might have been empty. 
+       * Taking into account that certain arrays might have been empty.
        */
       $build[$region] = isset($build[$region]) ?
-        array_merge($build[$region], $loaders) :
-        $loaders
+        array_merge($build[$region], $cards) :
+        $cards
       ;
       $build[$region]['#sorted'] = FALSE;
 
+      $build[$region]['card_region_controls'] = $this->cardRepository->generateRegionAttachLink($this->routeMatch, $region);
     }
+
     return $build;
-  }
-
-  /**
-   * Generate lazy loaders based on the data passed from the event dispatcher.
-   *
-   * @param array $cardData
-   *    An array of card data to display the cards from. Either an array of data
-   *    with extra keys or a simple id.
-   * @return array
-   *    Array of card lazy loaders keyed by machine name.
-   */
-  protected function generateCardLoaders($cardData) {
-    $loaders = [];
-
-    foreach($cardData as $card) {
-      $loaders['card_' . $card['id']] = [
-        '#lazy_builder' => [
-          "Drupal\\card\\Handler\\CardViewBuilder::lazyBuilder",
-          [
-            $card['id'],
-            isset($card['view_mode']) ? $card['view_mode'] : null,
-            isset($card['language']) ? $card['language'] : null,
-          ]
-        ]
-      ];
-    }
-
-    return $loaders;
   }
 
   /**

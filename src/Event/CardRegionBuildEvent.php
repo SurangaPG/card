@@ -5,7 +5,7 @@ namespace Drupal\card\Event;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class CardRegionBuildEvent extends Event implements CardRegionBuildEventInterface{
+class CardRegionBuildEvent extends Event implements CardRegionBuildEventInterface {
 
   /**
    * @var string $region the region that is being generated
@@ -22,7 +22,6 @@ class CardRegionBuildEvent extends Event implements CardRegionBuildEventInterfac
    * @var array
    */
   protected $cards;
-
 
   /**
    * CardRegionBuildEvent constructor.
@@ -66,11 +65,9 @@ class CardRegionBuildEvent extends Event implements CardRegionBuildEventInterfac
   }
 
   /**
-   * Adds a card based on some basic data
-   * @param array $cardInfo
-   *  contains the keys id, view_mode, language.
+   * @inheritdoc
    */
-  public function addCard($cardInfo) {
+  public function addCard(array $cardInfo) {
     $this->cards[] = $cardInfo;
   }
 

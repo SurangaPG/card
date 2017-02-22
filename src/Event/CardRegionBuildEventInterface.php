@@ -28,7 +28,9 @@ interface CardRegionBuildEventInterface {
 
   /**
    * Adds a card based on it's id
-   * @param $cardId
+   * @param array $cardData An array of lazy loadable card data for this region.
+   *  has the id, view_mode (optional) and language (optional) keys.
    */
-  public function addCard($cardId);
+  public function addCard(array $cardData);
+
 }

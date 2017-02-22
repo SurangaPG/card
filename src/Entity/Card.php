@@ -25,9 +25,8 @@ use Drupal\user\UserInterface;
  *
  *     "form" = {
  *       "default" = "Drupal\card\Form\CardForm",
- *       "layout" = "Drupal\card\Form\CardForm",
  *       "add" = "Drupal\card\Form\CardForm",
- *       "attach" = "Drupal\card\Form\CardForm",
+ *       "attach" = "Drupal\card\Form\CardAttachForm",
  *       "edit" = "Drupal\card\Form\CardForm",
  *       "delete" = "Drupal\card\Form\CardDeleteForm",
  *     },
@@ -49,7 +48,7 @@ use Drupal\user\UserInterface;
  *   links = {
  *     "canonical" = "/admin/content/card/{card}",
  *     "add-form" = "/admin/content/card/add",
- *     "attach-form" = "/node/{node}/card/attach",
+ *     "attach-form" = "/admin/content/card/attach",
  *     "edit-form" = "/admin/content/card/{card}/edit",
  *     "layout-form" = "/admin/content/card/{card}/layout",
  *     "delete-form" = "/admin/content/card/{card}/delete",
@@ -70,6 +69,51 @@ class Card extends ContentEntityBase implements CardInterface {
     $values += array(
       'user_id' => \Drupal::currentUser()->id(),
     );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getCanonical() {
+    return $this->get('canonical')->value;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setCanonical($canonical) {
+    $this->set('canonical', $canonical);
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getRouteParams() {
+    return $this->get('route_params')->value;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setRouteParams($params) {
+    $this->set('route_params', $params);
+    return $this;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getRegion() {
+    return $this->get('region')->value;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setRegion($region) {
+    $this->set('region', $region);
+    return $this;
   }
 
   /**
@@ -141,6 +185,40 @@ class Card extends ContentEntityBase implements CardInterface {
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Card entity.'))
       ->setReadOnly(TRUE);
+
+    $fields['canonical'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Canonical'))
+      ->setDescription(t('The canonical route name this card appears on'))
+      ->setSetting('max_length', 255)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['route_params'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Route parameters'))
+      ->setDescription(t('The additional params this card appears on.'))
+      ->setSetting('max_length', 510)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['weight'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Weight'))
+      ->setDescription(t("The weight for the card."))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['region'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Region'))
+      ->setDescription(t('The region this card appears in.'))
+      ->setSetting('max_length', 255)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['theme'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Theme'))
+      ->setDescription(t('The theme this card is active for.'))
+      ->setSetting('max_length', 255)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))

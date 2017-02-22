@@ -6,5 +6,4 @@ function template_preprocess_card(array &$variables) {
   foreach (\Drupal\Core\Render\Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
-
 }

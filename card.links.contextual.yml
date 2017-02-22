@@ -9,3 +9,9 @@ entity.card.delete_form:
   group: card
   title: Delete
   weight: 10
+
+entity.card.attach_form:
+  route_name: entity.card.attach_form
+  group: card_region
+  title: Attach Card
+  weight: 10

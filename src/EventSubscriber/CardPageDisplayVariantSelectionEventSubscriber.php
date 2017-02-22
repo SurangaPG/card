@@ -11,7 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * @see \Drupal\car\Plugin\DisplayVariant\CardPageVariant
  */
-class CardEventSubscriber implements EventSubscriberInterface {
+class CardPageDisplayVariantSelectionEventSubscriber implements EventSubscriberInterface {
 
   /**
    * The request stack.
