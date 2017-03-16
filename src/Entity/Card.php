@@ -79,6 +79,20 @@ class Card extends ContentEntityBase implements CardInterface {
   }
 
   /**
+   * @return \Drupal\block_content\BlockContentInterface;
+   */
+  public function getBlockContent() {
+    $this->get('block_content')->entity;
+  }
+
+  /**
+   * @param int $blockContentId
+   */
+  public function setBlockContent($blockContentId) {
+    $this->setBlockContent($blockContentId);
+  }
+
+  /**
    * @inheritdoc
    */
   public function setCanonical($canonical) {
@@ -192,6 +206,14 @@ class Card extends ContentEntityBase implements CardInterface {
       ->setSetting('max_length', 255)
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+
+    $fields['block_content'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Block Content'))
+      ->setDescription(t('The block content id connected to this card.'))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setRevisionable(TRUE)
+      ->setSetting('target_type', 'block_content');
 
     $fields['route_params'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Route parameters'))

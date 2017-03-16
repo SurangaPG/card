@@ -107,4 +107,14 @@ interface CardInterface extends ContentEntityInterface, EntityChangedInterface, 
    */
   public function setPublished($published);
 
+  /**
+   * @return \Drupal\block_content\BlockContentInterface;
+   */
+  public function getBlockContent();
+
+  /**
+   * @param int $blockContentId
+   */
+  public function setBlockContent($blockContentId);
+
 }
