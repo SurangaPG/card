@@ -130,6 +130,23 @@ class Card extends ContentEntityBase implements CardInterface {
   /**
    * @inheritdoc
    */
+  public function getWeight() {
+    $weight = $this->get('weight')->value;
+    return isset($weight) ? $weight : 0;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function setWeight($params) {
+    $this->set('weight', $params);
+    return $this;
+  }
+
+
+  /**
+   * @inheritdoc
+   */
   public function getRegion() {
     return $this->get('region')->value;
   }

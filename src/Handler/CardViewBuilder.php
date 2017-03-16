@@ -20,6 +20,8 @@ class CardViewBuilder extends EntityViewBuilder {
 
     /** @var \Drupal\card\CardInterface $entity */
     parent::alterBuild($build, $entity, $display, $view_mode);
+
+    $build['#weight'] = $entity->get('weight');
   }
 
   /**

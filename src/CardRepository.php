@@ -2,6 +2,7 @@
 
 namespace Drupal\card;
 
+use Drupal\card\Entity\Card;
 use Drupal\card\Event\CardRegionBuildEvent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
@@ -169,6 +170,8 @@ class CardRepository implements CardRepositoryInterface {
   protected function generateCardLoaders($cardData) {
     $loaders = [];
 
+    $cards = $this->loadRelevantCards($cardData);
+
     foreach($cardData as $card) {
       $loaders['card_' . $card['id']] = [
         '#lazy_builder' => [
@@ -178,12 +181,36 @@ class CardRepository implements CardRepositoryInterface {
             isset($card['view_mode']) ? $card['view_mode'] : null,
             isset($card['language']) ? $card['language'] : null,
           ]
-        ]
+        ],
+        '#weight' => isset($cardData['#weight']) ?
+          $cardData['#weight'] : $cards[$card['id']]->getWeight(),
       ];
     }
 
     return $loaders;
   }
 
+  /**
+   * Load all the cards to get their weight.
+   *
+   * @TODO This is a bit unfortunate since we don't really want to do yet.
+   * But we need the weights and there is no real clean way to load these.
+   *
+   * @param array $cardData
+   *   The card data returned from the query.
+   *
+   * @return CardInterface[] $cards
+   *   All the relevant cards for this region.
+   */
+  protected function loadRelevantCards($cardData) {
+    $cards = [];
+    foreach($cardData as $card) {
+      $cards[$card['id']] = $card['id'];
+    }
+    if(!empty($cards)) {
+      $cards = Card::loadMultiple($cards);
+    }
 
+    return $cards;
+  }
 }

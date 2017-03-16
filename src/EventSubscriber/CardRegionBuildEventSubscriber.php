@@ -20,7 +20,8 @@ class CardRegionBuildEventSubscriber implements EventSubscriberInterface {
     $query = $entityTypeManager->getStorage('card')->getQuery();
 
     $query->condition('region', $event->getRegion())
-      ->condition('canonical', $event->getRouteMatch()->getRouteName());
+      ->condition('canonical', $event->getRouteMatch()->getRouteName())
+      ->sort('weight', 'ASC');
 
     // Only add the params as an option if params have been added. Since it
     // ignores NULL values it set with an empty string?

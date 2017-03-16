@@ -117,4 +117,14 @@ interface CardInterface extends ContentEntityInterface, EntityChangedInterface, 
    */
   public function setBlockContent($blockContentId);
 
+  /**
+   * @return int
+   */
+  public function getWeight();
+
+  /**
+   * @param int $weight
+   */
+  public function setWeight($weight);
+
 }
