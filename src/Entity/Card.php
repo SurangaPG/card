@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\card\CardInterface;
 use Drupal\user\UserInterface;
+use Symfony\Component\Routing\Route;
 
 /**
  * Defines the Card entity.
@@ -72,6 +73,17 @@ class Card extends ContentEntityBase implements CardInterface {
   }
 
   /**
+   * Accounts for the fact that the content is in a content_block.
+   * @inheritdoc
+   */
+  public function label() {
+    if($this->getBlockContent()) {
+      return $this->getBlockContent()->label();
+    }
+    return parent::label();
+  }
+
+  /**
    * @inheritdoc
    */
   public function getCanonical() {
@@ -82,7 +94,7 @@ class Card extends ContentEntityBase implements CardInterface {
    * @return \Drupal\block_content\BlockContentInterface;
    */
   public function getBlockContent() {
-    $this->get('block_content')->entity;
+    return $this->get('block_content')->entity;
   }
 
   /**
@@ -212,7 +224,6 @@ class Card extends ContentEntityBase implements CardInterface {
       ->setDescription(t('The block content id connected to this card.'))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE)
-      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'block_content');
 
     $fields['route_params'] = BaseFieldDefinition::create('string')

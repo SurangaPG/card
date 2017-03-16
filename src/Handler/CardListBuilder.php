@@ -2,6 +2,7 @@
 
 namespace Drupal\card\Handler;
 
+use Drupal\card\CardInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -20,7 +21,10 @@ class CardListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
 
-    $header = [];
+    $header = [
+      t('Label'),
+      t('Region'),
+    ];
     return $header + parent::buildHeader();
   }
 
@@ -28,7 +32,12 @@ class CardListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row = [];
+
+    /** @var CardInterface $entity */
+    $row = [
+      $entity->label(),
+      $entity->getRegion(),
+    ];
     return $row + parent::buildRow($entity);
   }
 
